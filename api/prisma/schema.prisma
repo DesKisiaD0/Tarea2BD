@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model usuarios {
+  id               Int                     @id @default(autoincrement())
+  direccion_correo String                  @unique
+  nombre String
+  descripcion      String
+  clave String
+  fecha_creacion   DateTime                @default(now())
+  bloqueosHechos   direcciones_bloqueadas[] @relation("UsuarioBloqueador")
+  bloqueosRecibidos direcciones_bloqueadas[] @relation("UsuarioBloqueado")
+  favoritosHechos  direcciones_favoritas[] @relation("UsuarioFavoritor")
+  favoritosRecibidos direcciones_favoritas[] @relation("UsuarioFavorito")
+  correosEnviados  correos[]               @relation("correosRemitente")
+  correosRecibidos correos[]               @relation("correosDestinatario")
+}
+
+model direcciones_bloqueadas {
+    id          Int      @id @default(autoincrement()) 
+    usuario_id  Int
+    bloqueado_id Int
+
+    bloqueador  usuarios @relation("UsuarioBloqueador", fields: [usuario_id], references: [id])
+    bloqueado   usuarios @relation("UsuarioBloqueado", fields: [bloqueado_id], references: [id])
+
+    @@unique([usuario_id, bloqueado_id])
+}
+
+model direcciones_favoritas {
+    id         Int      @id @default(autoincrement())
+    usuario_id Int
+    favorito_id Int
+
+    favoritor  usuarios @relation("UsuarioFavoritor", fields: [usuario_id], references: [id])
+    favorito   usuarios @relation("UsuarioFavorito", fields: [favorito_id], references: [id])
+
+    @@unique([usuario_id, favorito_id])
+}
+
+model correos {
+  id             Int       @id @default(autoincrement())
+  remitente_id   Int
+  destinatario_id Int
+  asunto         String
+  es_favorito    Boolean   @default(false)
+  remitente      usuarios  @relation("correosRemitente", fields: [remitente_id], references: [id])
+  destinatario   usuarios  @relation("correosDestinatario", fields: [destinatario_id], references: [id])
+}
