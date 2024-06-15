@@ -67,7 +67,7 @@ export const correos = new Elysia()
             "status": 200,
             "message": "Correo marcado como favorito"
         };
-    });
+    })
 
 
     .post("/desmarcarFAV", async ({body}) => {
@@ -130,7 +130,7 @@ export const correos = new Elysia()
             "status": 200,
             "message": "Correo desmarcado como favorito"
         };
-    });
+    })
 
 
     .get("/informacion", async ({ query }) => {
