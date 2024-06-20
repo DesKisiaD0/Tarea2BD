@@ -1,4 +1,3 @@
-"bloquear.js"
 import Elysia from "elysia";
 import { PrismaClient } from "@prisma/client";
 
@@ -16,13 +15,13 @@ export const bloquear = new Elysia()
         const { correo, clave, correo_bloqueado } = body;
     
 
-    const Existe = await prisma.usuarios.findUnique({
+    const ExisteUsuario = await prisma.usuarios.findUnique({
         where: {
             direccion_correo: correo
         }
     });
 
-    if(Existe === null){
+    if(ExisteUsuario === null){
         return {
             "status": 400,
             "message": "Usuario no existe"

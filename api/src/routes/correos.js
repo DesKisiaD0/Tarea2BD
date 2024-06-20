@@ -10,12 +10,12 @@ export const correos = new Elysia()
     .post("/marcarFAV", async ({body}) => {
         const {correo, clave, id_correo_favorito} = body;
 
-        const Existe = await prisma.usuarios.findUnique({
+        const ExisteUsuario = await prisma.usuarios.findUnique({
             where: {
                 direccion_correo: correo
             }
         });
-        if(Existe === null){
+        if(ExisteUsuario === null){
             return {
                 "status": 400,
                 "message": "Usuario no existe"
@@ -73,12 +73,12 @@ export const correos = new Elysia()
     .post("/desmarcarFAV", async ({body}) => {
         const {correo, clave, id_correo_favorito} = body;
 
-        const Existe = await prisma.usuarios.findUnique({
+        const ExisteUsuario = await prisma.usuarios.findUnique({
             where: {
                 direccion_correo: correo
             }
         });
-        if(Existe === null){
+        if(ExisteUsuario === null){
             return {
                 "status": 400,
                 "message": "Usuario no existe"
@@ -146,14 +146,14 @@ export const correos = new Elysia()
     
         try {
             // Buscar el usuario en la base de datos
-            const Existe = await prisma.usuarios.findUnique({
+            const ExisteUsuario = await prisma.usuarios.findUnique({
                 where: {
                     direccion_correo: correo
                 }
             });
     
             // Verificar si el usuario existe
-            if (Existe === null) {
+            if (ExisteUsuario === null) {
                 return {
                     "status": 400,
                     "message": "Usuario no existe"

@@ -7,12 +7,12 @@ export const registrar = new Elysia()
     .post("/registrar", async ({body}) => {
         const { correo, clave, nombre, apellido } = body;
 
-        const Existe = await prisma.usuarios.findUnique({
+        const ExisteUsuario = await prisma.usuarios.findUnique({
             where: {
                 direccion_correo: correo
             }
         });
-        if(Existe !== null){
+        if(ExisteUsuario !== null){
             return {
                 "status": 400,
                 "message": "Usuario ya existe"
