@@ -11,7 +11,7 @@ export const bloquear = new Elysia()
                 "status": 400,
                 "message": "Faltan datos"
             };
-        }
+        }                                 
         const { correo, clave, correo_bloqueado } = body;
     
 

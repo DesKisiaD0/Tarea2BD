@@ -1,9 +1,10 @@
 import requests
-
-API_URL= 'http://localhost:3000/api'
-
+from Tarea2BD.funciones import *
 
 
-response = requests.get(API_URL)
+
+
+
+
 
 
