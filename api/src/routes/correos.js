@@ -132,18 +132,17 @@ export const correos = new Elysia()
         };
     })
 
-
     .get("/informacion", async ({ query }) => {
-        const { correo, clave } = query;
-    
+        const { correo } = query;
+        console.log("hola")
         // Validación de entrada
-        if (!correo || !clave) {
+        if (!correo) {
             return {
                 "status": 400,
                 "message": "Faltan parámetros requeridos"
             };
         }
-    
+
         try {
             // Buscar el usuario en la base de datos
             const ExisteUsuario = await prisma.usuarios.findUnique({
@@ -151,7 +150,7 @@ export const correos = new Elysia()
                     direccion_correo: correo
                 }
             });
-    
+
             // Verificar si el usuario existe
             if (ExisteUsuario === null) {
                 return {
@@ -159,14 +158,15 @@ export const correos = new Elysia()
                     "message": "Usuario no existe"
                 };
             }
-    
+
             // Retornar la información del usuario
             return {
                 "status": 200,
                 "message": "Usuario encontrado",
                 "data": {
-                    "nombre": Existe.nombre,
-                    "apellido": Existe.apellido
+                    "nombre": ExisteUsuario.nombre,
+                    "correo": ExisteUsuario.direccion_correo,
+                    "descripcion": ExisteUsuario.descripcion
                 }
             };
         } catch (error) {
@@ -178,3 +178,5 @@ export const correos = new Elysia()
             };
         }
     });
+
+ 

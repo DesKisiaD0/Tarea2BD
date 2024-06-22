@@ -6,13 +6,13 @@ const prisma = new PrismaClient();
 
 export const bloquear = new Elysia()
     .post("/bloquear", async ({body}) => {
-        if(body.correo === undefined || body.clave === undefined || body.correo_bloqueado === undefined){
+        if(body.correo === undefined || body.correo_bloqueado === undefined){
             return {
                 "status": 400,
                 "message": "Faltan datos"
             };
         }                                 
-        const { correo, clave, correo_bloqueado } = body;
+        const { correo, correo_bloqueado } = body;
     
 
     const ExisteUsuario = await prisma.usuarios.findUnique({
@@ -40,15 +40,31 @@ export const bloquear = new Elysia()
             "message": "Usuario a bloquear no existe"
         };
     }
-
+    const yaBloqueado = await prisma.direcciones_bloqueadas.findUnique({
+        where: {
+            usuario_id_bloqueado_id: {
+                usuario_id: ExisteUsuario.id,
+                bloqueado_id: ExisteBloqueado.id
+            }
+        }
+    });
+    
+    if (yaBloqueado !== null) {
+        return {
+            "status": 400,
+            "message": "El usuario ya ha sido bloqueado"
+        };
+    }
+    
     try {
-        await prisma.bloqueados.create({
+        await prisma.direcciones_bloqueadas.create({
             data: {
-                direccion_correo: correo,
-                direccion_correo_bloqueado: correo_bloqueado
+                usuario_id: ExisteUsuario.id,
+                bloqueado_id: ExisteBloqueado.id
             }
         });
     } catch (error) {
+        
         return {
             "status": 400,
             "message": "Error al bloquear usuario"

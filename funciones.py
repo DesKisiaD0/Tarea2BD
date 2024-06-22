@@ -79,7 +79,6 @@ def bloquear_usuario():
     url = "http://localhost:3000/api/bloquear"
     payload = {
         "correo": correoglobal,
-        "clave": claveglobal,
         "correo_bloqueado": correo_bloqueado
     }
     response = requests.post(url, json=payload)
@@ -149,6 +148,24 @@ def desmark_fav():
     else:   
         print("Algo fue mal....")
 
+def informacion ():
+    correo = input("Ingrese el correo del usuario del que desea obtener informacion: ")
+    
+    url = "http://localhost:3000/api/informacion"
+    payload = {
+        "correo_informacion": correo
+    }
+    response = requests.post(url, json=payload)
+
+    if response.headers.get('Content-Type') == 'application/json':
+        response = response.json()
+
+        if "estado" in response:
+            print(response["mensaje"])
+        else:
+            print("Error desconocido: ", response)
+    else:   
+        print("Algo fue mal....")
 
 
 

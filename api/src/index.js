@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 import { api } from "./routes/api"
 
-const APP_PORT = 3001;
+const APP_PORT = 3000;
 
 const app = new Elysia()
   .use(api)
