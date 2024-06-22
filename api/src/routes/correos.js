@@ -7,77 +7,99 @@ const prisma = new PrismaClient();
 export const correos = new Elysia()
 
 
-    .post("/marcarFAV", async ({body}) => {
-        const {correo, clave, id_correo_favorito} = body;
+    .post("/marcarFAV", async ({ body }) => {
+        if (body.correo === undefined || body.correo_favorito === undefined) {
+            return {
+                status: 400,
+                message: "Faltan datos"
+            };
+        }
+
+        const { correo, correo_favorito } = body;
 
         const ExisteUsuario = await prisma.usuarios.findUnique({
             where: {
                 direccion_correo: correo
             }
         });
-        if(ExisteUsuario === null){
+
+        if (ExisteUsuario === null) {
             return {
-                "status": 400,
-                "message": "Usuario no existe"
+                status: 400,
+                message: "Usuario no existe"
             };
         }
 
-        const ExisteCorreo = await prisma.correos.findUnique({
+        const ExisteFavorito = await prisma.usuarios.findUnique({
             where: {
-                id_correo: id_correo_favorito
+                direccion_correo: correo_favorito
             }
         });
-        if(ExisteCorreo === null){
+
+        if (ExisteFavorito === null) {
             return {
-                "status": 400,
-                "message": "Correo no existe"
+                status: 400,
+                message: "Correo favorito no existe"
             };
         }
 
-        if(ExisteCorreo.direccion_correo !== correo){
-            return {
-                "status": 400,
-                "message": "Correo no pertenece al usuario"
-            };
-        }
+        const yaFavorito = await prisma.direcciones_favoritas.findUnique({
+            where: {
+                usuario_id_favorito_id: {
+                    usuario_id: ExisteUsuario.id,
+                    favorito_id: ExisteFavorito.id
+                }
+            }
+        });
 
-        if(ExisteCorreo.es_favotito){
+        if (yaFavorito) {
             return {
-                "status": 400,
-                "message": "Correo ya es favorito"
+                status: 400,
+                message: "El correo ya es favorito"
             };
         }
 
         try {
-            await prisma.correos.update({
-                where: {
-                    id_correo: id_correo_favorito
-                },
+            await prisma.direcciones_favoritas.create({
                 data: {
-                    es_favotito: true
+                    usuario_id: ExisteUsuario.id,
+                    favorito_id: ExisteFavorito.id
                 }
             });
-        } catch (error) {
             return {
-                "status": 400,
-                "message": "Error al marcar como favorito"
+                status: 200,
+                message: "Correo marcado como favorito"
+            };
+        } catch (error) {
+            if (error.code === 'P2002') {
+                return {
+                    status: 400,
+                    message: "El correo ya es favorito"
+                };
+            }
+            return {
+                status: 500,
+                message: "Error al marcar como favorito"
             };
         }
-        return {
-            "status": 200,
-            "message": "Correo marcado como favorito"
-        };
     })
 
 
-    .post("/desmarcarFAV", async ({body}) => {
-        const {correo, clave, id_correo_favorito} = body;
+    .delete("/desmarcarFAV", async ({body}) => {
+        if(body.correo === undefined || body.correo_favorito === undefined){
+            return {
+                "status": 400,
+                "message": "Faltan datos"
+            };
+        }  
+        const {correo, correo_favorito} = body;
 
         const ExisteUsuario = await prisma.usuarios.findUnique({
             where: {
                 direccion_correo: correo
             }
         });
+
         if(ExisteUsuario === null){
             return {
                 "status": 400,
@@ -85,56 +107,58 @@ export const correos = new Elysia()
             };
         }
 
-        const ExisteCorreo = await prisma.correos.findUnique({
+        const ExisteFavorito = await prisma.usuarios.findUnique({
             where: {
-                id_correo: id_correo_favorito
+                direccion_correo: correo_favorito
             }
         });
-        if(ExisteCorreo === null){
-            return {
-                "status": 400,
-                "message": "Correo no existe"
-            };
-        }
 
-        if(ExisteCorreo.direccion_correo !== correo){
+        if(ExisteFavorito === null){
             return {
                 "status": 400,
-                "message": "Correo no pertenece al usuario"
+                "message": "Correo favorito no existe"
             };
-        }
+        }   
 
-        if(!ExisteCorreo.es_favotito){
+        const yaFavorito = await prisma.direcciones_favoritas.findUnique({
+            where: {
+                usuario_id_favorito_id: {
+                    usuario_id: ExisteUsuario.id,
+                    favorito_id: ExisteFavorito.id
+                }
+            }
+        });
+
+        if(yaFavorito === null){
             return {
                 "status": 400,
-                "message": "Correo no es favorito"
+                "message": "El correo no es favorito"
             };
-        }
+        }   
 
         try {
-            await prisma.correos.update({
+            await prisma.direcciones_favoritas.delete({
                 where: {
-                    id_correo: id_correo_favorito
-                },
-                data: {
-                    es_favotito: false
+                    usuario_id_favorito_id: {
+                        usuario_id: ExisteUsuario.id,
+                        favorito_id: ExisteFavorito.id
+                    }
                 }
             });
+            return {
+                "status": 200,
+                "message": "Correo desmarcado como favorito"
+            };
         } catch (error) {
             return {
-                "status": 400,
+                "status": 500,
                 "message": "Error al desmarcar como favorito"
             };
         }
-        return {
-            "status": 200,
-            "message": "Correo desmarcado como favorito"
-        };
     })
 
     .get("/informacion", async ({ query }) => {
         const { correo } = query;
-        console.log("hola")
         // Validación de entrada
         if (!correo) {
             return {
@@ -177,6 +201,64 @@ export const correos = new Elysia()
                 "message": "Error interno del servidor"
             };
         }
-    });
+    })
 
- 
+    .get("/favoritos", async ({ query }) => {
+        if (!query.correo) {
+            return {
+                "status": 400,
+                "message": "Faltan parámetros requeridos"
+            };
+        }
+        const { correo } = query;
+
+        try {
+            const ExisteUsuario = await prisma.usuarios.findUnique({
+                where: {
+                    direccion_correo: correo
+                }
+            });
+
+            if (ExisteUsuario === null) {
+                return {
+                    "status": 400,
+                    "message": "Usuario no existe"
+                };
+            }
+
+            const Favoritos = await prisma.direcciones_favoritas.findMany({
+                where: {
+                    usuario_id: ExisteUsuario.id
+                },
+                select: {
+                    favorito_id: true
+                }
+            });
+
+            const CorreosFavoritos = [];
+
+            for (let i = 0; i < Favoritos.length; i++) {
+                const Favorito = await prisma.usuarios.findUnique({
+                    where: {
+                        id: Favoritos[i].favorito_id
+                    },
+                    select: {
+                        direccion_correo: true
+                    }
+                });
+                CorreosFavoritos.push(Favorito.direccion_correo);
+            }
+
+            return {
+                "status": 200,
+                "message": "Correos favoritos encontrados",
+                "data": CorreosFavoritos
+            };
+        } catch (error) {
+            console.error('Error al buscar los correos favoritos:', error);
+            return {
+                "status": 500,
+                "message": "Error interno del servidor"
+            };
+        }
+    })

@@ -24,8 +24,6 @@ model usuarios {
   bloqueosRecibidos direcciones_bloqueadas[] @relation("UsuarioBloqueado")
   favoritosHechos  direcciones_favoritas[] @relation("UsuarioFavoritor")
   favoritosRecibidos direcciones_favoritas[] @relation("UsuarioFavorito")
-  correosEnviados  correos[]               @relation("correosRemitente")
-  correosRecibidos correos[]               @relation("correosDestinatario")
 }
 
 model direcciones_bloqueadas {
@@ -48,14 +46,4 @@ model direcciones_favoritas {
     favorito   usuarios @relation("UsuarioFavorito", fields: [favorito_id], references: [id])
 
     @@unique([usuario_id, favorito_id])
-}
-
-model correos {
-  id             Int       @id @default(autoincrement())
-  remitente_id   Int
-  destinatario_id Int
-  asunto         String
-  es_favorito    Boolean   @default(false)
-  remitente      usuarios  @relation("correosRemitente", fields: [remitente_id], references: [id])
-  destinatario   usuarios  @relation("correosDestinatario", fields: [destinatario_id], references: [id])
 }

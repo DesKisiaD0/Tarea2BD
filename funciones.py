@@ -106,7 +106,6 @@ def mark_fav():
     url = "http://localhost:3000/api/marcarFAV"
     payload = {
         "correo": correoglobal,
-        "clave": claveglobal,
         "correo_favorito": correo_favorito
     }
     response = requests.post(url, json=payload)
@@ -123,17 +122,16 @@ def mark_fav():
 
 
 def desmark_fav():
-    global correoglobal, claveglobal
+    global correoglobal
     correo_favorito = input("Ingrese el correo del usuario que desea desmarcar como favorito: ")
 
-    if not correo_favorito or not correoglobal or not claveglobal:
+    if not correo_favorito or not correoglobal:
         print("Datos incompletos")
         return
     
     url = "http://localhost:3000/api/desmarcarFAV"
     payload = {
         "correo": correoglobal,
-        "clave": claveglobal,
         "correo_favorito": correo_favorito
     }
     response = requests.post(url, json=payload)
@@ -167,5 +165,24 @@ def informacion ():
     else:   
         print("Algo fue mal....")
 
+def mostrarFAV():
+    correo = input("Ingrese el correo del usuario del que desea obtener los favoritos: ")
+
+    url = "http://localhost:3000/api/favoritos"
+    payload = {
+        "correo": correo
+    }
+
+    response = requests.post(url, json=payload)
+
+    if response.headers.get('Content-Type') == 'application/json':
+        response = response.json()
+
+        if "estado" in response:
+            print(response["mensaje"])
+        else:
+            print("Error desconocido: ", response)
+    else:   
+        print("Algo fue mal....")
 
 
