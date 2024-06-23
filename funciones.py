@@ -284,7 +284,8 @@ def informacion ():
 
 
 def mostrarFAV():
-    correo = input("Ingrese el correo del usuario del que desea obtener los favoritos: ")
+    global correoglobal
+    correo = correoglobal
 
     url = "http://localhost:3000/api/favoritos"
     payload = {
@@ -293,14 +294,22 @@ def mostrarFAV():
 
     response = requests.post(url, json=payload)
 
-    if response.headers.get('Content-Type') == 'application/json':
-        responsePlayload = response.json()
+    if response.status_code == 200:
+        if response.headers.get('Content-Type') == 'application/json':
+            responsePlayload = response.json()
 
-        if "estado" in responsePlayload:
-            print(responsePlayload["mensaje"])
+            if "estado" in responsePlayload:
+                if "favoritos" in responsePlayload:
+                    print("Usuarios favoritos:")
+                    for fav in responsePlayload["favoritos"]:
+                        print(fav)
+                else:   
+                    print(responsePlayload["mensaje"])
+            else:
+                print("Error desconocido: ", response)
         else:
-            print("Error desconocido: ", response)
-    else:   
-        print("Algo fue mal....")
+            print("Algo fue mal....")
+    else:
+        print("Error:", response)
 
 
