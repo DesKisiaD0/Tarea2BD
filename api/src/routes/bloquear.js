@@ -6,7 +6,9 @@ const prisma = new PrismaClient();
 
 export const bloquear = new Elysia()
     .post("/bloquear", async ({body}) => {
+        console.log("Se ha solicitado bloquear a un usuario")
         if(body.correo === undefined || body.correo_bloqueado === undefined){
+            console.log("Faltan datos para poder realizar el bloqueo con exito")
             return {
                 "status": 400,
                 "message": "Faltan datos"
@@ -22,6 +24,7 @@ export const bloquear = new Elysia()
     });
 
     if(ExisteUsuario === null){
+        console.log("Se intento bloquear con un usuario que no existe")
         return {
             "status": 400,
             "message": "Usuario no existe"
@@ -35,6 +38,7 @@ export const bloquear = new Elysia()
     });
 
     if(ExisteBloqueado === null){
+        console.log("Se intento bloquear a un usuario que no existe")
         return {
             "status": 400,
             "message": "Usuario a bloquear no existe"
@@ -50,6 +54,7 @@ export const bloquear = new Elysia()
     });
     
     if (yaBloqueado !== null) {
+        console.log("Esté usuario ya ha sido bloqueado con exito")
         return {
             "status": 400,
             "message": "El usuario ya ha sido bloqueado"
@@ -63,15 +68,16 @@ export const bloquear = new Elysia()
                 bloqueado_id: ExisteBloqueado.id
             }
         });
+        console.log("Usuario bloqueado con exito")
+        return {
+            "status": 200,
+            "message": "Usuario bloqueado con exito"
+        };
     } catch (error) {
-        
+        console.log("Error al bloquear usuario")
         return {
             "status": 400,
             "message": "Error al bloquear usuario"
         };
     }
-    return {
-        "status": 200,
-        "message": "Usuario bloqueado con exito"
-    };
 });

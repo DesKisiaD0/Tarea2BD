@@ -11,7 +11,7 @@ def registro():
         print('Datos incompletos')
         return
     
-    url = 'http://localhost:3000/api/registrar'
+    url = 'http://localhost:3001/api/registrar'
 
     data = {
         'nombre': nombre,
@@ -43,7 +43,7 @@ def login():
         print('Datos incompletos')
         return
     
-    url = 'http://localhost:3000/api/login'
+    url = 'http://localhost:3001/api/login'
 
     data = {
         'correo': correo,
@@ -76,7 +76,7 @@ def bloquear_usuario():
         print("Datos incompletos")
         return
     
-    url = "http://localhost:3000/api/bloquear"
+    url = "http://localhost:3001/api/bloquear"
     payload = {
         "correo": correoglobal,
         "correo_bloqueado": correo_bloqueado
@@ -103,7 +103,7 @@ def mark_fav():
         print("Datos incompletos")
         return
     
-    url = "http://localhost:3000/api/marcarFAV"
+    url = "http://localhost:3001/api/marcarFAV"
     payload = {
         "correo": correoglobal,
         "correo_favorito": correo_favorito
@@ -129,7 +129,7 @@ def desmark_fav():
         print("Datos incompletos")
         return
     
-    url = "http://localhost:3000/api/desmarcarFAV"
+    url = "http://localhost:3001/api/desmarcarFAV"
     payload = {
         "correo": correoglobal,
         "correo_favorito": correo_favorito
@@ -149,7 +149,7 @@ def desmark_fav():
 def informacion ():
     correo = input("Ingrese el correo del usuario del que desea obtener informacion: ")
     
-    url = "http://localhost:3000/api/informacion"
+    url = "http://localhost:3001/api/informacion"
     payload = {
         "correo_informacion": correo
     }
@@ -168,7 +168,7 @@ def informacion ():
 def mostrarFAV():
     correo = input("Ingrese el correo del usuario del que desea obtener los favoritos: ")
 
-    url = "http://localhost:3000/api/favoritos"
+    url = "http://localhost:3001/api/favoritos"
     payload = {
         "correo": correo
     }

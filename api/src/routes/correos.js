@@ -8,7 +8,9 @@ export const correos = new Elysia()
 
 
     .post("/marcarFAV", async ({ body }) => {
+        console.log("Se ha solicitado marcar como favorito a un usuario")
         if (body.correo === undefined || body.correo_favorito === undefined) {
+            console.log("Faltan datos para poder marcar un favorito con exito")
             return {
                 status: 400,
                 message: "Faltan datos"
@@ -24,6 +26,7 @@ export const correos = new Elysia()
         });
 
         if (ExisteUsuario === null) {
+            console.log("Se intento maracar cómo favorito con un usuario que no existe")
             return {
                 status: 400,
                 message: "Usuario no existe"
@@ -37,6 +40,7 @@ export const correos = new Elysia()
         });
 
         if (ExisteFavorito === null) {
+            console.log("Se intento maracar cómo favorito a un usuario que no existe")
             return {
                 status: 400,
                 message: "Correo favorito no existe"
@@ -53,6 +57,7 @@ export const correos = new Elysia()
         });
 
         if (yaFavorito) {
+            console.log("Esté usuario ya ha sido maracado cómo favorito con exito")
             return {
                 status: 400,
                 message: "El correo ya es favorito"
@@ -66,17 +71,20 @@ export const correos = new Elysia()
                     favorito_id: ExisteFavorito.id
                 }
             });
+            console.log("Usuario marcado cómo favorito con exito")
             return {
                 status: 200,
                 message: "Correo marcado como favorito"
             };
         } catch (error) {
             if (error.code === 'P2002') {
+                console.log("Esté usuario ya ha sido maracado cómo favorito con exito")
                 return {
                     status: 400,
                     message: "El correo ya es favorito"
                 };
             }
+            console.log("Error al marcar cómo favorito")
             return {
                 status: 500,
                 message: "Error al marcar como favorito"
@@ -86,7 +94,9 @@ export const correos = new Elysia()
 
 
     .delete("/desmarcarFAV", async ({body}) => {
+        console.log("Se ha solicitado desmarcar como favorito a un usuario")
         if(body.correo === undefined || body.correo_favorito === undefined){
+            console.log("Faltan datos para poder desmarcar un favorito con exito")
             return {
                 "status": 400,
                 "message": "Faltan datos"
@@ -101,6 +111,7 @@ export const correos = new Elysia()
         });
 
         if(ExisteUsuario === null){
+            console.log("Se intento desmarcar cómo favorito con un usuario que no existe")
             return {
                 "status": 400,
                 "message": "Usuario no existe"
@@ -114,6 +125,7 @@ export const correos = new Elysia()
         });
 
         if(ExisteFavorito === null){
+            console.log("Se intento desmarcar cómo favorito a un usuario que no existe")
             return {
                 "status": 400,
                 "message": "Correo favorito no existe"
@@ -130,6 +142,7 @@ export const correos = new Elysia()
         });
 
         if(yaFavorito === null){
+            console.log("El correo ingresado no es favorito, no es necesario desmarcarlo")
             return {
                 "status": 400,
                 "message": "El correo no es favorito"
@@ -145,11 +158,13 @@ export const correos = new Elysia()
                     }
                 }
             });
+            console.log("Usuario desmarcado cómo favorito con exito")
             return {
                 "status": 200,
                 "message": "Correo desmarcado como favorito"
             };
         } catch (error) {
+            console.log("Error al desmarcar como favorito")
             return {
                 "status": 500,
                 "message": "Error al desmarcar como favorito"
@@ -158,9 +173,11 @@ export const correos = new Elysia()
     })
 
     .get("/informacion", async ({ query }) => {
+        console.log("Se ha solicitado información de un usuario")
         const { correo } = query;
         // Validación de entrada
         if (!correo) {
+            console.log("Faltan parametros requeridos")
             return {
                 "status": 400,
                 "message": "Faltan parámetros requeridos"
@@ -177,6 +194,7 @@ export const correos = new Elysia()
 
             // Verificar si el usuario existe
             if (ExisteUsuario === null) {
+                console.log("El usuario solicitado no fue encontrado")
                 return {
                     "status": 400,
                     "message": "Usuario no existe"
@@ -184,6 +202,7 @@ export const correos = new Elysia()
             }
 
             // Retornar la información del usuario
+            console.log("La solicitud fue realizada con exito")
             return {
                 "status": 200,
                 "message": "Usuario encontrado",
@@ -204,7 +223,9 @@ export const correos = new Elysia()
     })
 
     .get("/favoritos", async ({ query }) => {
+        console.log("Se solicito mostrar favoritos de un usuario")
         if (!query.correo) {
+            console.log("Faltan parametros requeridos")
             return {
                 "status": 400,
                 "message": "Faltan parámetros requeridos"
@@ -220,6 +241,7 @@ export const correos = new Elysia()
             });
 
             if (ExisteUsuario === null) {
+                console.log("El usuario solicitado no fue encontrado")
                 return {
                     "status": 400,
                     "message": "Usuario no existe"
@@ -248,7 +270,7 @@ export const correos = new Elysia()
                 });
                 CorreosFavoritos.push(Favorito.direccion_correo);
             }
-
+            console.log("La solicitud fue realizada con exito")
             return {
                 "status": 200,
                 "message": "Correos favoritos encontrados",
@@ -261,4 +283,4 @@ export const correos = new Elysia()
                 "message": "Error interno del servidor"
             };
         }
-    })
+    });
