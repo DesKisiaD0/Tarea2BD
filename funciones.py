@@ -7,19 +7,6 @@ claveglobal = ""
 
 
 
-def verificar_conexion():
-    try:
-        response = requests.get("http://localhost:3000/api")
-        if response.status_code == 200:
-            print("Conexión al servidor exitosa.")
-            return True
-        else:
-            print("Servidor no disponible. Código de estado:", response.status_code)
-            return False
-    except requests.exceptions.RequestException as e:
-        print("Error al conectar con el servidor:", e)
-        return False
-
 
 
 
@@ -85,11 +72,14 @@ def login():
 
     if response.status_code == 200 and data["estado"] == 200:
         if data["credenciales_correctas"]:
+            print("\n")
             print("Inicio de sesión exitoso!")
+            print("Bienvenido a ComuniKen!")
             correoglobal = correo
             claveglobal = clave
             return True
         else:
+            print("\n")
             print("Credenciales incorrectas. Por favor, intenta de nuevo.")
             return False
     else:
@@ -202,24 +192,22 @@ def desmark_fav():
         return
     
     url = "http://localhost:3000/api/desmarcarFAV"
-
-    payload = {
+    params = {
         "correo": correoglobal,
         "correo_favorito": correo_favorito
     }
 
-    response = requests.post(url, json=payload)
+    response = requests.delete(url, params=params)
 
     if response.headers.get('Content-Type') == 'application/json':
-        responsePlayload = response.json()
+        response_payload = response.json()
 
-        if "estado" in responsePlayload:
-            print(responsePlayload["mensaje"])
+        if response_payload.get("status") == 200:
+            print(response_payload["message"])
         else:
-            print("Error desconocido: ", response)
+            print(response_payload.get("message", "Error desconocido"))
     else:   
         print("Algo fue mal....")
-
 
 
 
@@ -248,20 +236,31 @@ def informacion ():
     url = "http://localhost:3000/api/informacion"
 
 
-    payload = {
+    playload = {
         "correo_informacion": correo
     }
-    response = requests.post(url, json=payload)
+    
+    response = requests.get(url, params=playload)
+    if response.status_code == 200:
 
-    if response.headers.get('Content-Type') == 'application/json':
+
         responsePlayload = response.json()
-
-        if "estado" in responsePlayload:
-            print(responsePlayload["mensaje"])
+        
+        if "status" in responsePlayload:
+            # Mensajes de éxito
+            if responsePlayload["status"] == 200:
+                print("\nInformación del usuario: ")
+                for key in responsePlayload["data"]:
+                    print(key + ": " + responsePlayload["data"][key])
+                print("\n")
+            # Mensajes de error
+            else:
+                print("\n" + responsePlayload["mensaje"])
         else:
-            print("Error desconocido: ", response)
-    else:   
-        print("Algo fue mal....")
+            print("Error desconocido:", response.status_code)
+
+    else:
+        print(f"Error {response.status_code} al intentar obtener la información del usuario.")
 
 
 
@@ -283,33 +282,29 @@ def informacion ():
 
 
 
-def mostrarFAV():
-    global correoglobal
+def mostrarFAV(): # Asegúrese de definir su correo global
     correo = correoglobal
 
-    url = "http://localhost:3000/api/favoritos"
-    payload = {
+    url = "http://localhost:3000/api/favoritos"  # Asegúrese de que la URL coincida con la definida en su servidor Elysia
+    params = {
         "correo": correo
     }
 
-    response = requests.post(url, json=payload)
+    try:
+        response = requests.get(url, params=params)
 
-    if response.status_code == 200:
-        if response.headers.get('Content-Type') == 'application/json':
-            responsePlayload = response.json()
+        if response.status_code == 200:
+            response_payload = response.json()
 
-            if "estado" in responsePlayload:
-                if "favoritos" in responsePlayload:
-                    print("Usuarios favoritos:")
-                    for fav in responsePlayload["favoritos"]:
-                        print(fav)
-                else:   
-                    print(responsePlayload["mensaje"])
+            if response_payload.get("status") == 200:
+                print("Usuarios favoritos:")
+                for fav in response_payload["data"]:
+                    print(fav)
             else:
-                print("Error desconocido: ", response)
+                print(response_payload.get("message", "Error desconocido"))
         else:
-            print("Algo fue mal....")
-    else:
-        print("Error:", response)
+            print(f"Error: {response.status_code} - {response.text}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión: {e}")
 
 

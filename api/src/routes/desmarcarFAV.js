@@ -3,20 +3,18 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-
 export const desmarcarFAV = new Elysia()
 
-
-    .delete("/desmarcarFAV", async ({body}) => {
-        console.log("Se ha solicitado desmarcar como favorito a un usuario")
-        if(body.correo === undefined || body.correo_favorito === undefined){
-            console.log("Faltan datos para poder desmarcar un favorito con exito")
+    .delete("/desmarcarFAV", async ({ query }) => {
+        console.log("Se ha solicitado desmarcar como favorito a un usuario");
+        if (!query.correo || !query.correo_favorito) {
+            console.log("Faltan datos para poder desmarcar un favorito con éxito");
             return {
-                "status": 400,
-                "message": "Faltan datos"
+                status: 400,
+                message: "Faltan datos"
             };
-        }  
-        const {correo, correo_favorito} = body;
+        }
+        const { correo, correo_favorito } = query;
 
         const ExisteUsuario = await prisma.usuarios.findUnique({
             where: {
@@ -24,11 +22,11 @@ export const desmarcarFAV = new Elysia()
             }
         });
 
-        if(ExisteUsuario === null){
-            console.log("Se intento desmarcar cómo favorito con un usuario que no existe")
+        if (ExisteUsuario === null) {
+            console.log("Se intentó desmarcar cómo favorito con un usuario que no existe");
             return {
-                "status": 400,
-                "message": "Usuario no existe"
+                status: 400,
+                message: "Usuario no existe"
             };
         }
 
@@ -38,13 +36,13 @@ export const desmarcarFAV = new Elysia()
             }
         });
 
-        if(ExisteFavorito === null){
-            console.log("Se intento desmarcar cómo favorito a un usuario que no existe")
+        if (ExisteFavorito === null) {
+            console.log("Se intentó desmarcar cómo favorito a un usuario que no existe");
             return {
-                "status": 400,
-                "message": "Correo favorito no existe"
+                status: 400,
+                message: "Correo favorito no existe"
             };
-        }   
+        }
 
         const yaFavorito = await prisma.direcciones_favoritas.findUnique({
             where: {
@@ -55,13 +53,13 @@ export const desmarcarFAV = new Elysia()
             }
         });
 
-        if(yaFavorito === null){
-            console.log("El correo ingresado no es favorito, no es necesario desmarcarlo")
+        if (yaFavorito === null) {
+            console.log("El correo ingresado no es favorito, no es necesario desmarcarlo");
             return {
-                "status": 400,
-                "message": "El correo no es favorito"
+                status: 400,
+                message: "El correo no es favorito"
             };
-        }   
+        }
 
         try {
             await prisma.direcciones_favoritas.delete({
@@ -72,16 +70,16 @@ export const desmarcarFAV = new Elysia()
                     }
                 }
             });
-            console.log("Usuario desmarcado cómo favorito con exito")
+            console.log("Usuario desmarcado cómo favorito con éxito");
             return {
-                "status": 200,
-                "message": "Correo desmarcado como favorito"
+                status: 200,
+                message: "Correo desmarcado como favorito"
             };
         } catch (error) {
-            console.log("Error al desmarcar como favorito")
+            console.log("Error al desmarcar como favorito");
             return {
-                "status": 500,
-                "message": "Error al desmarcar como favorito"
+                status: 500,
+                message: "Error al desmarcar como favorito"
             };
         }
     });

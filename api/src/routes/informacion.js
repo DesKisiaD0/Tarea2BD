@@ -6,24 +6,23 @@ const prisma = new PrismaClient();
 
 export const informacion = new Elysia()
 
-
     .get("/informacion", async ({ query }) => {
         console.log("Se ha solicitado información de un usuario")
-        const { correo } = query;
         // Validación de entrada
-        if (!correo) {
+        if (!query.correo_informacion) {
             console.log("Faltan parametros requeridos")
             return {
                 "status": 400,
                 "message": "Faltan parámetros requeridos"
             };
         }
+        const { correo_informacion } = query;
 
         try {
             // Buscar el usuario en la base de datos
             const ExisteUsuario = await prisma.usuarios.findUnique({
                 where: {
-                    direccion_correo: correo
+                    direccion_correo: correo_informacion
                 }
             });
 
@@ -42,10 +41,11 @@ export const informacion = new Elysia()
                 "status": 200,
                 "message": "Usuario encontrado",
                 "data": {
-                    "nombre": ExisteUsuario.nombre,
-                    "correo": ExisteUsuario.direccion_correo,
-                    "descripcion": ExisteUsuario.descripcion
+                    "Nombre": ExisteUsuario.nombre,
+                    "Correo": ExisteUsuario.direccion_correo,
+                    "Descripcion": ExisteUsuario.descripcion
                 }
+                
             };
         } catch (error) {
             // Manejo de errores

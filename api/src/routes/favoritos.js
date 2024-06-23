@@ -3,17 +3,15 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-
 export const favoritos = new Elysia()
 
-
     .get("/favoritos", async ({ query }) => {
-        console.log("Se solicito mostrar favoritos de un usuario")
+        console.log("Se solicitó mostrar favoritos de un usuario");
         if (!query.correo) {
-            console.log("Faltan parametros requeridos")
+            console.log("Faltan parámetros requeridos");
             return {
-                "status": 400,
-                "message": "Faltan parámetros requeridos"
+                status: 400,
+                message: "Faltan parámetros requeridos"
             };
         }
         const { correo } = query;
@@ -25,11 +23,11 @@ export const favoritos = new Elysia()
                 }
             });
 
-            if (ExisteUsuario === null) {
-                console.log("El usuario solicitado no fue encontrado")
+            if (!ExisteUsuario) {
+                console.log("El usuario solicitado no fue encontrado");
                 return {
-                    "status": 400,
-                    "message": "Usuario no existe"
+                    status: 400,
+                    message: "Usuario no existe"
                 };
             }
 
@@ -44,28 +42,30 @@ export const favoritos = new Elysia()
 
             const CorreosFavoritos = [];
 
-            for (let i = 0; i < Favoritos.length; i++) {
-                const Favorito = await prisma.usuarios.findUnique({
+            for (const favorito of Favoritos) {
+                const usuarioFavorito = await prisma.usuarios.findUnique({
                     where: {
-                        id: Favoritos[i].favorito_id
+                        id: favorito.favorito_id
                     },
                     select: {
                         direccion_correo: true
                     }
                 });
-                CorreosFavoritos.push(Favorito.direccion_correo);
+                if (usuarioFavorito) {
+                    CorreosFavoritos.push(usuarioFavorito.direccion_correo);
+                }
             }
-            console.log("La solicitud fue realizada con exito")
+            console.log("La solicitud fue realizada con éxito");
             return {
-                "status": 200,
-                "message": "Correos favoritos encontrados",
-                "data": CorreosFavoritos
+                status: 200,
+                message: "Correos favoritos encontrados",
+                data: CorreosFavoritos
             };
         } catch (error) {
             console.error('Error al buscar los correos favoritos:', error);
             return {
-                "status": 500,
-                "message": "Error interno del servidor"
+                status: 500,
+                message: "Error interno del servidor"
             };
         }
     });
