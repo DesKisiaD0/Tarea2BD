@@ -2,6 +2,7 @@ import elysia from "elysia";
 import { correos } from "./correos";
 import { registrar } from "./registrar";
 import { bloquear } from "./bloquear";
+import { login } from "./login";
 
 
 export const api = new elysia({
@@ -11,4 +12,5 @@ export const api = new elysia({
     .use(correos)
     .use(registrar)
     .use(bloquear)
+    .use(login)
     ;

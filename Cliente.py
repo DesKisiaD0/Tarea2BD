@@ -31,23 +31,10 @@ def mostrar_usuario():
     opcion = input("Ingrese una opcion: ")
     return opcion
 
-def verificar_conexion():
-    try:
-        response = requests.get("http://localhost:3001/api")
-        if response.status_code == 200:
-            print("Conexión al servidor exitosa.")
-            return True
-        else:
-            print("Servidor no disponible. Código de estado:", response.status_code)
-            return False
-    except requests.exceptions.RequestException as e:
-        print("Error al conectar con el servidor:", e)
-        return False
 
 def main():
     print("Bienvenido a la aplicacion de correo electronico")
-    if not verificar_conexion():
-        sys.exit(1)
+
 
     while True:
         opcion = mostrar_usuario()
@@ -69,19 +56,17 @@ def main():
         else:
             print("Opcion no valida")
 
-print("Hola")
+
 verificar_conexion()
 while True:
     opcion = mostrar_inicio()
-
-    case = {
-        "1": registro,
-        "2": login,
-        "3": lambda: sys.exit(0)
-    }
-
-    out = case.get(opcion)
-    if out:
-        out()
+    if opcion == "1":
+        registro()
+    elif opcion == "2":
+        login()
+        main()
+    elif opcion == "3":
+        print(MENU_SALIR)
+        break
     else:
         print("Opcion no valida")
