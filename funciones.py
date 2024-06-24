@@ -3,7 +3,10 @@ import requests
 correoglobal = ""
 claveglobal = ""
 
-
+#  #  ##  ####  ##      Cada función interactúa con una API RESTful utilizando la biblioteca requests de Python
+## # #  #  #   #  #     para enviar solicitudes HTTP y procesar las respuestas, brindando funcionalidades como
+# ## #  #  #   ####     registro de usuarios, autenticación, gestión de favoritos, bloqueo de usuarios y 
+#  #  ##   #   #  #     obtención de información de usuarios.
 
 
 
@@ -14,6 +17,12 @@ claveglobal = ""
 
 
 def registro():
+
+    # registro() 
+    # solicita al usuario ingresar datos como nombre, correo, clave y descripción
+    # para REGISTRAR un nuevo usuario a través de una solicitud POST a la API. 
+    # Muestra mensajes de éxito o error según la respuesta recibida.
+
     nombre = input('Ingrese su nombre: ')
     correo = input('Ingrese su correo: ')
     clave = input('Ingrese su clave: ')
@@ -56,6 +65,12 @@ def registro():
 
 
 def login():
+
+    # login() 
+    # permite al usuario INICIAR SESIÓN ingresando correo y clave. 
+    # Realiza una solicitud GET a la API de login y verifica las credenciales. 
+    # Guarda el correo y la clave globalmente si las credenciales son correctas.
+
     global correoglobal, claveglobal
     url = "http://localhost:3000/api/login"
 
@@ -103,6 +118,12 @@ def login():
 
 
 def bloquear_usuario():
+
+    # bloquear_usuario()
+    # permite al usuario BLOQUEAR a otro usuario ingresando el correo del usuario a bloquear. 
+    # Realiza una solicitud POST a la API de bloquear 
+    # y muestra mensajes de éxito o error según la respuesta recibida.
+
     global correoglobal, claveglobal
     correo_bloqueado = input("Ingrese el correo del usuario que desea bloquear: ")
 
@@ -141,6 +162,12 @@ def bloquear_usuario():
 
 
 def mark_fav():
+
+    # mark_fav()
+    # permite al usuario MARCAR a otro usuario COMO FAVORITO ingresando su correo. 
+    # Realiza una solicitud POST a la API de marcarFAV 
+    # y muestra mensajes de éxito o error según la respuesta recibida.
+
     global correoglobal
     correo_favorito = input("Ingrese el correo del usuario que desea marcar como favorito: ")
 
@@ -184,6 +211,11 @@ def mark_fav():
 
 
 def desmark_fav():
+
+    # desmark_fav(): Permite al usuario DESMARCAR a otro usuario como favorito ingresando su correo. 
+    # Realiza una solicitud DELETE a la API de desmarcarFAV 
+    # y muestra mensajes de éxito o error según la respuesta recibida.
+
     global correoglobal
     correo_favorito = input("Ingrese el correo del usuario que desea desmarcar como favorito: ")
 
@@ -226,6 +258,12 @@ def desmark_fav():
 
 
 def informacion ():
+
+    # informacion()
+    # permite al usuario OBTENER INFORMACIÓN de otro ingresando su correo. 
+    # Realiza una solicitud GET a la API de informacion 
+    # y muestra la información del usuario si (y sólo si) la solicitud es exitosa.
+
     correo = input("Ingrese el correo del usuario del que desea obtener informacion: ")
     
     if not correo:
@@ -282,10 +320,15 @@ def informacion ():
 
 
 
-def mostrarFAV(): # Asegúrese de definir su correo global
+def mostrarFAV(): 
+
+    # mostrarFAV(): MUESTRA los usuarios FAVORITOS del usuario actual (utilizando el correo global). 
+    # Realiza una solicitud GET a la API de favoritos 
+    # y muestra los resultados si la solicitud es exitosa.
+
     correo = correoglobal
 
-    url = "http://localhost:3000/api/favoritos"  # Asegúrese de que la URL coincida con la definida en su servidor Elysia
+    url = "http://localhost:3000/api/favoritos"  
     params = {
         "correo": correo
     }

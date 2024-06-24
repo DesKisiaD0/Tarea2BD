@@ -115,6 +115,12 @@ def mostrar_pepe_barbie():
 
 
 def main():
+
+    # main()
+    # muestra las opciones para el usuario.
+    # Si el usuario selecciona una operación inválida, se le notifica.
+    # Si el usuario escoge salir, se rompe el ciclo.
+    # De lo contrario, realiza los siguientes seis comandos:
     while True:
         opcion = mostrar_usuario()
 
@@ -138,6 +144,9 @@ def main():
 
 
 while True:
+
+# Esto irá mostrando arte ASCII de Pepe Barbie cada vez que la situación lo amerite.
+
     opcion = mostrar_pepe_barbie()
     if opcion == "1":
         registro()
@@ -149,3 +158,4 @@ while True:
         break
     else:
         print("Opcion no valida")
+
